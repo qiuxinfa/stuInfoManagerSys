@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+    <!-- 导入jdbc配置文件 -->
+    <context:property-placeholder location="classpath:jdbc.properties"/>
+    <!-- 注解的扫描路径 -->
+    <context:component-scan base-package="com.qxf.*"/>
+    <!-- 连接池 -->
+    <!-- 配置1个阿里连接池 -->
+    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init"
+          destroy-method="close">
+        <property name="driverClassName">
+            <value>${jdbc.driver}</value>
+        </property>
+        <property name="url">
+            <value>${jdbc.url}</value>
+        </property>
+        <property name="username">
+            <value>${jdbc.username}</value>
+        </property>
+        <property name="password">
+            <value>${jdbc.password}</value>
+        </property>
+        <!-- 连接池最大使用连接数 -->
+        <property name="maxActive">
+            <value>20</value>
+        </property>
+        <!-- 初始化连接大小 -->
+        <property name="initialSize">
+            <value>1</value>
+        </property>
+        <!-- 获取连接最大等待时间 -->
+        <property name="maxWait">
+            <value>60000</value>
+        </property>
+        <!-- 连接池最大空闲 -->
+        <property name="maxIdle">
+            <value>20</value>
+        </property>
+        <!-- 连接池最小空闲 -->
+        <property name="minIdle">
+            <value>3</value>
+        </property>
+        <!-- 自动清除无用连接 -->
+        <property name="removeAbandoned">
+            <value>true</value>
+        </property>
+        <!-- 清除无用连接的等待时间 -->
+        <property name="removeAbandonedTimeout">
+            <value>180</value>
+        </property>
+        <!-- 连接属性 -->
+        <property name="connectionProperties">
+            <value>clientEncoding=UTF-8</value>
+        </property>
+    </bean>
+
+    <!-- mybatis的sessionfatory -->
+    <bean id="sqlSessionFactory"
+          class="org.mybatis.spring.SqlSessionFactoryBean"
+          p:dataSource-ref="dataSource"
+          p:configLocation="classpath:mybatis-config.xml"
+          p:mapperLocations="classpath:/mapper/*.xml"/>
+
+    <!-- dao的实现类对象，既mapper对象 。从上面的session工厂中，自动创建出所有mapper文件下的实现类对象 -->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer"
+          p:basePackage="com.qxf.mapper"
+          p:sqlSessionFactoryBeanName="sqlSessionFactory"/>
+
+    <!-- 事务管理器，用于注解注入事务 -->
+    <bean id="transactionManager"
+          class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
+          p:dataSource-ref="dataSource"/>
+
+</beans>

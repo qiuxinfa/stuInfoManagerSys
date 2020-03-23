@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.qxf.mapper.ClazzMapper">
+    
+    <!-- 查询所有班级信息 -->
+    <select id="findAllClazz" parameterType="com.qxf.pojo.Clazz" resultType="com.qxf.pojo.Clazz">
+    	select m.id,m.name,
+    	  (select c.name from major c where c.id=m.major_id) majorId,
+    	  (select c.name from institute c where c.id=m.institute_id) instituteId
+    	from clazz m 
+    	  <where>
+    	    <if test="id!=null and id!=''">
+    			id= #{id}
+    		</if>
+    		<if test="name!=null and name!=''">
+    		  and name= #{name}
+    		</if>
+    		<if test="majorId!=null and majorId!='' and majorId!='-1'">
+    		  and major_id= #{majorId}
+    		</if> 
+    		<if test="instituteId!=null and instituteId!='' and instituteId!='-1'">
+    		  and institute_id= #{instituteId}
+    		</if>      		    	  	
+    	  </where>
+    </select>
+    
+    <!-- 根据id查询班级信息 -->
+    <select id="findClazzById" resultType="com.qxf.pojo.Clazz" parameterType="string">
+        select * from clazz where id=#{id}
+    </select>
+    
+    <!-- 根据id查询班级信息 -->
+    <select id="findClazzByName" resultType="com.qxf.pojo.Clazz" parameterType="string">
+        select * from clazz where name like '%${name}%'
+    </select>
+    
+     <!-- 根据学号删除班级 -->
+    <delete id="deleteClazzById" parameterType="string">
+    	delete from clazz where id=#{id}
+    </delete> 
+    
+     <!-- 修改信息 -->
+    <update id="updateClazz" parameterType="com.qxf.pojo.Clazz">
+    	update clazz
+    	  <set>
+    		<if test="name!=null and name!=''">
+    			name= #{name}
+    		</if>
+    		<if test="majorId!=null and majorId!='' and majorId!='-1'">
+    			, major_id= #{majorId}
+    		</if> 
+    		<if test="instituteId!=null and instituteId!='' and instituteId!='-1'">
+    			, institute_id= #{instituteId}
+    		</if> 	    				    		
+    	</set>
+    	 where id=#{id}	
+    </update> 
+    
+        <!-- 添加班级 -->
+    <insert id="addClazz" parameterType="com.qxf.pojo.Clazz">
+    	insert into clazz(id,name,major_id,institute_id) 
+    	values(#{id},#{name},#{majorId},#{instituteId})
+    </insert>
+    
+            
+</mapper>

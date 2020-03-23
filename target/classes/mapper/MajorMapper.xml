@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.qxf.mapper.MajorMapper">
+    
+    <!-- 查询所有专业信息 -->
+    <select id="findAllMajor" parameterType="com.qxf.pojo.Major" resultType="com.qxf.pojo.Major">
+    	select m.id,m.name,
+    	  (select c.name from institute c where c.id=m.institute_id) instituteId
+    	from major m 
+    	  <where>
+    	    <if test="id!=null and id!=''">
+    			id= #{id}
+    		</if>
+    		<if test="name!=null and name!=''">
+    		  and name= #{name}
+    		</if>
+    		<if test="instituteId!=null and instituteId!='' and instituteId!='-1'">
+    		  and institute_id= #{instituteId}
+    		</if>     	  	
+    	  </where>
+    </select>
+    
+    <!-- 根据id查询专业信息 -->
+    <select id="findMajorById" resultType="com.qxf.pojo.Major" parameterType="string">
+        select * from major where id=#{id}
+    </select>
+    
+    <!-- 根据id查询专业信息 -->
+    <select id="findMajorByName" resultType="com.qxf.pojo.Major" parameterType="string">
+        select * from major where name like '%${name}%'
+    </select>
+    
+     <!-- 根据学号删除专业 -->
+    <delete id="deleteMajorById" parameterType="string">
+    	delete from major where id=#{id}
+    </delete> 
+    
+     <!-- 修改信息 -->
+    <update id="updateMajor" parameterType="com.qxf.pojo.Major">
+    	update major
+    	  <set>
+    		<if test="name!=null and name!=''">
+    			name= #{name}
+    		</if>
+    		<if test="instituteId!=null and instituteId!='' and instituteId!='-1'">
+    			, institute_id= #{instituteId}
+    		</if> 		    		
+    	</set>
+    	 where id=#{id}	
+    </update> 
+    
+        <!-- 添加专业 -->
+    <insert id="addMajor" parameterType="com.qxf.pojo.Major">
+    	insert into major(id,name,institute_id) 
+    	values(#{id},#{name},#{instituteId})
+    </insert>
+    
+            
+</mapper>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.qxf.mapper.CourseMapper">
+    
+    <!-- 查询所有课程信息 -->
+    <select id="findAllCourse" parameterType="com.qxf.pojo.Course" resultType="com.qxf.pojo.Course">
+    	select id,name
+    	from course  
+    	  <where>
+    	    <if test="id!=null and id!=''">
+    			id= #{id}
+    		</if>
+    		<if test="name!=null and name!=''">
+    		  and name= #{name}
+    		</if>     	  	
+    	  </where>
+    </select>
+    
+    <!-- 根据id查询课程信息 -->
+    <select id="findCourseById" resultType="com.qxf.pojo.Course" parameterType="string">
+        select * from course where id=#{id}
+    </select>
+    
+    <!-- 根据id查询课程信息 -->
+    <select id="findCourseByName" resultType="com.qxf.pojo.Course" parameterType="string">
+        select * from course where name like '%${name}%'
+    </select>
+    
+     <!-- 根据学号删除课程 -->
+    <delete id="deleteCourseById" parameterType="string">
+    	delete from course where id=#{id}
+    </delete> 
+    
+     <!-- 修改信息 -->
+    <update id="updateCourse" parameterType="com.qxf.pojo.Course">
+    	update course
+    	  <set>
+    		<if test="name!=null and name!=''">
+    			name= #{name}
+    		</if>	    		
+    	</set>
+    	 where id=#{id}	
+    </update> 
+    
+        <!-- 添加课程 -->
+    <insert id="addCourse" parameterType="com.qxf.pojo.Course">
+    	insert into course(id,name) 
+    	values(#{id},#{name})
+    </insert>
+    
+            
+</mapper>

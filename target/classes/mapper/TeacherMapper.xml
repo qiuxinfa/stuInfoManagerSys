@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.qxf.mapper.TeacherMapper">
+    
+    <!-- 查询所有老师信息 -->
+    <select id="findAllTeacher" parameterType="com.qxf.pojo.Teacher" resultType="com.qxf.pojo.Teacher">
+    	select id,name,title
+    	from teacher  
+    	  <where>
+    	    <if test="id!=null and id!=''">
+    			id= #{id}
+    		</if>
+    		<if test="name!=null and name!=''">
+    		  and name= #{name}
+    		</if>
+    		<if test="title!=null and title!=''">
+    		  and title= #{title}
+    		</if>     	  	
+    	  </where>
+    </select>
+    
+    <!-- 根据id查询老师信息 -->
+    <select id="findTeacherById" resultType="com.qxf.pojo.Teacher" parameterType="string">
+        select * from teacher where id=#{id}
+    </select>
+    
+    <!-- 根据id查询老师信息 -->
+    <select id="findTeacherByName" resultType="com.qxf.pojo.Teacher" parameterType="string">
+        select * from teacher where name like '%${name}%'
+    </select>
+    
+     <!-- 根据学号删除老师 -->
+    <delete id="deleteTeacherById" parameterType="string">
+    	delete from teacher where id=#{id}
+    </delete> 
+    
+     <!-- 修改信息 -->
+    <update id="updateTeacher" parameterType="com.qxf.pojo.Teacher">
+    	update teacher
+    	  <set>
+    		<if test="name!=null and name!=''">
+    			name= #{name}
+    		</if>
+    		<if test="title!=null and title!=''">
+    			, title= #{title}
+    		</if> 		    		
+    	</set>
+    	 where id=#{id}	
+    </update> 
+    
+        <!-- 添加老师 -->
+    <insert id="addTeacher" parameterType="com.qxf.pojo.Teacher">
+    	insert into teacher(id,name,title) 
+    	values(#{id},#{name},#{title})
+    </insert>
+    
+            
+</mapper>

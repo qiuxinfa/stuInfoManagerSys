@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.qxf.mapper.GradeMapper">
+    
+    <!-- 查询所有成绩信息 -->
+    <select id="findAllGrade" parameterType="com.qxf.pojo.Grade" resultType="com.qxf.pojo.Grade">
+    	select g.id,
+    	(select c.name from student c where c.id=g.student_id) studentId,
+    	(select c.name from course c where c.id=g.course_id) courseId,
+    	(select c.name from teacher c where c.id=g.teacher_id) teacherId,
+    	DATE_FORMAT(g.exam_time,'%Y-%m-%d') examTime,
+    	g.exam_type,
+    	g.score
+    	from grade g 
+    	  <where>
+    	    <if test="id!=null and id!=''">
+    			id= #{id}
+    		</if>
+    		<if test="examTime!=null and examTime!=''">
+    		  and g.exam_time= #{examTime}
+    		</if>
+    		<if test="examType!=null and examType!=''">
+    		  and exam_type= #{examType}
+    		</if>
+    		<if test="score!=null and score!=''">
+    		  and score=#{score}
+    		</if>
+    		<if test="studentId!=null and studentId!='' and studentId!='-1'">
+    		  and student_id=#{studentId}
+    		</if>  
+    		<if test="courseId!=null and courseId!='' and courseId!='-1'">
+    		  and course_id=#{courseId}
+    		</if> 
+    		<if test="teacherId!=null and teacherId!='' and teacherId!='-1'">
+    		  and teacher_id=#{teacherId}
+    		</if>        	  	
+    	  </where>
+    </select>
+    
+    <!-- 根据id查询成绩信息 -->
+    <select id="findGradeById" resultType="com.qxf.pojo.Grade" parameterType="string">
+        select * from grade where id=#{id}
+    </select>
+    
+     <!-- 根据学号删除成绩 -->
+    <delete id="deleteGradeById" parameterType="string">
+    	delete from grade where id=#{id}
+    </delete> 
+    
+     <!-- 修改信息 -->
+    <update id="updateGrade" parameterType="com.qxf.pojo.Grade">
+    	update grade
+    	  <set>
+    		<if test="examTime!=null and examTime!=''">
+    		  exam_time= #{examTime}
+    		</if>
+    		<if test="examType!=null and examType!=''">
+    		  ,exam_type= #{examType}
+    		</if>
+    		<if test="score!=null and score!=''">
+    		  ,score=#{score}
+    		</if>
+    		<if test="studentId!=null and studentId!='' and studentId!='-1'">
+    		  ,student_id=#{studentId}
+    		</if>  
+    		<if test="courseId!=null and courseId!='' and courseId!='-1'">
+    		  ,course_id=#{courseId}
+    		</if> 
+    		<if test="teacherId!=null and teacherId!='' and teacherId!='-1'">
+    		  ,teacher_id=#{teacherId}
+    		</if>    		    		
+    	</set>
+    	 where id=#{id}	
+    </update> 
+    
+        <!-- 添加成绩 -->
+    <insert id="addGrade" parameterType="com.qxf.pojo.Grade">
+    	insert into grade(id,exam_time,exam_type,score,student_id,course_id,teacher_id) 
+    	values(#{id},#{examTime},#{examType},#{score},#{studentId},#{courseId},#{teacherId})
+    </insert>
+    
+    <!-- 查找学生列表 -->
+    <select id="getStudentList" resultType="com.qxf.pojo.Student">
+    	select id,name from student
+    </select>
+
+    <!-- 查找学生-课程列表 -->
+    <select id="getStudentCourseList" parameterType="com.qxf.pojo.StudentCourse" resultType="com.qxf.pojo.Course">
+    	select c.id,c.name from course c,student_course sc where c.id=sc.course_id
+    	<if test="studentId!=null and studentId!='' and studentId!='-1'">
+    	  and sc.student_id=#{studentId}
+    	</if>
+    </select>
+    
+    <!-- 查找课程-老师列表 -->
+    <select id="getCourseTeacherList" parameterType="com.qxf.pojo.CourseTeacher" resultType="com.qxf.pojo.Teacher">
+    	select t.id,t.name from teacher t,course_teacher ct where t.id=ct.teacher_id 
+    	<if test="courseId!=null and courseId!='' and courseId!='-1'">
+    	  and ct.course_id=#{courseId}
+    	</if>    	
+    </select>
+    
+    <!-- 查找当前数据是否存在中间表StudentCourse -->
+    <select id="findStudentCourseById" parameterType="com.qxf.pojo.StudentCourse" resultType="com.qxf.pojo.StudentCourse">
+    	select * from student_course
+    	<where>
+    		<if test="studentId!=null and studentId!=''">
+    		  and student_id=#{studentId}
+    		</if>
+    		<if test="courseId!=null and courseId!=''">
+    		  and course_id=#{courseId}
+    		</if>    	
+    	</where>
+    </select>
+    
+    <!-- 将当前数据插入到中间表StudentCourse -->  
+    <insert id="addStudentCourse" parameterType="com.qxf.pojo.StudentCourse">
+    	insert into student_course(id,student_id,course_id) values (#{id},#{studentId},#{courseId});
+    </insert>
+
+    <!-- 查找当前数据是否存在中间表CourseTeacher -->
+    <select id="findCourseTeacherById" parameterType="com.qxf.pojo.CourseTeacher" resultType="com.qxf.pojo.CourseTeacher">
+    	select * from course_teacher
+    	<where>
+    		<if test="teacherId!=null and teacherId!=''">
+    		  and teacher_id=#{teacherId}
+    		</if>
+    		<if test="courseId!=null and courseId!=''">
+    		  and course_id=#{courseId}
+    		</if>    	
+    	</where>
+    </select>
+    
+    <!-- 将当前数据插入到中间表CourseTeacher -->  
+    <insert id="addCourseTeacher" parameterType="com.qxf.pojo.CourseTeacher">
+    	insert into course_teacher(id,course_id,teacher_id) values (#{id},#{courseId},#{teacherId});
+    </insert>    
+              
+</mapper>

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.qxf.mapper.StudentMapper">
+    
+    <!-- 查询所有学生信息 -->
+    <select id="findAllStudent" parameterType="com.qxf.pojo.Student" resultType="com.qxf.pojo.Student">
+     select s.id,s.name,s.sex,s.age,s.phone,
+    	(select c.name from clazz c where c.id=s.clazz_id) clazzId,
+    	(select c.name from major c where c.id=s.major_id) majorId,
+    	(select c.name from institute c where c.id=s.institute_id) instituteId
+     from student s 
+    	  <where>
+    	    <if test="id!=null and id!=''">
+    			id= #{id}
+    		</if>
+    		<if test="name!=null and name!=''">
+    		  and name= #{name}
+    		</if>
+    		<if test="sex!=null and sex!=''">
+    		  and sex= #{sex}
+    		</if>
+    		<if test="age!=null and age!=''">
+    		  and age=#{age}
+    		</if>
+    		<if test="phone!=null and phone!=''">
+    		  and phone=#{phone}
+    		</if>
+    		<if test="clazzId!=null and clazzId!='' and clazzId!='-1'">
+    		  and clazz_id=#{clazzId}
+    		</if>  
+    		<if test="majorId!=null and majorId!='' and majorId!='-1'">
+    		  and major_id=#{majorId}
+    		</if> 
+    		<if test="instituteId!=null and instituteId!='' and instituteId!='-1'">
+    		  and institute_id=#{instituteId}
+    		</if>     	  	
+    	  </where>
+    </select>
+    
+    <!-- 根据id查询学生信息 -->
+    <select id="findStudentById" resultType="com.qxf.pojo.Student" parameterType="string">
+        select * from student where id=#{id}
+    </select>
+    
+    <!-- 根据id查询学生信息 -->
+    <select id="findStudentByName" resultType="com.qxf.pojo.Student" parameterType="string">
+        select * from student where name like '%${name}%'
+    </select>
+    
+     <!-- 根据学号删除学生 -->
+    <delete id="deleteStudentById" parameterType="string">
+    	delete from student where id=#{id}
+    </delete> 
+    
+     <!-- 修改信息 -->
+    <update id="updateStudent" parameterType="com.qxf.pojo.Student">
+    	update student
+    	  <set>
+    		<if test="name!=null and name!=''">
+    			name= #{name}
+    		</if>
+    		<if test="sex!=null and sex!=''">
+    			, sex= #{sex}
+    		</if>
+    		<if test="age!=null and age!=''">
+    			, age= #{age}
+    		</if>    		
+    		<if test="phone!=null and phone!=''">
+    			, phone=#{phone}
+    		</if>
+    		<if test="clazzId!=null and clazzId!='' and clazzId!='-1'">
+    			, clazz_id=#{clazzId}
+    		</if>
+    		<if test="majorId!=null and majorId!='' and majorId!='-1'">
+    			, major_id=#{majorId}
+    		</if>
+    		<if test="instituteId!=null and instituteId!='' and instituteId!='-1'">
+    			, institute_id=#{instituteId}
+    		</if>    		    		
+    	</set>
+    	 where id=#{id}	
+    </update> 
+    
+        <!-- 添加学生 -->
+    <insert id="addStudent" parameterType="com.qxf.pojo.Student">
+      insert into student(id,name,sex,age,phone,clazz_id,major_id,institute_id) 
+    	values(#{id},#{name},#{sex},#{age},#{phone},#{clazzId},#{majorId},#{instituteId})
+    </insert>
+    
+        <!-- 查找学院列表 -->
+    <select id="getInstituteList" resultType="com.qxf.pojo.Institute">
+    	select id,name from institute
+    </select>
+
+    <!-- 查找专业列表 -->
+    <select id="getMajorList" parameterType="com.qxf.pojo.Major" resultType="com.qxf.pojo.Major">
+    	select id,name from major where 1=1
+    	<if test="instituteId!=null and instituteId!='' and instituteId!='-1'">
+    	  and institute_id=#{instituteId}
+    	</if>
+    </select>
+    
+    <!-- 查找班级列表 -->
+    <select id="getClazzList" parameterType="com.qxf.pojo.Clazz" resultType="com.qxf.pojo.Clazz">
+    	select id,name from clazz where 1=1 
+    	<if test="majorId!=null and majorId!='' and majorId!='-1'">
+    	  and major_id=#{majorId}
+    	</if>    	
+    </select>
+       
+</mapper>

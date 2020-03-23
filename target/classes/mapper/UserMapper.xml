@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.qxf.mapper.UserMapper">
+        <!-- 添加用户-->
+    <insert id="addUser" parameterType="com.qxf.pojo.User">
+    	insert into user(id,username,password,user_type) 
+    	values(#{id},#{username},#{password},#{userType})
+    </insert>
+    
+    <!-- 查找用户 -->
+    <select id="findUser" parameterType="com.qxf.pojo.User" resultType="com.qxf.pojo.User">
+    	select * from user where username=#{username} and password=#{password} and user_type=#{userType}
+    </select>
+            
+</mapper>
